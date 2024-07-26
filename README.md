@@ -1,1 +1,0 @@
-# ShadeJoryan.github.io
