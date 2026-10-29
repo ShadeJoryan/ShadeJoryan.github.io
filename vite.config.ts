@@ -1,8 +1,9 @@
 import { defineConfig } from 'vite';
 
-// The Pages workflow supplies /<repository-name>/. Use '/' for local development.
+// shadejoryan.github.io is a GitHub Pages user site, so assets are served
+// directly from the domain root instead of /<repository-name>/.
 export default defineConfig({
-  base: process.env.VITE_BASE_PATH || '/',
+  base: '/',
   esbuild: {
     jsx: 'automatic',
   },
