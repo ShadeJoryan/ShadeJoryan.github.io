@@ -1,0 +1,124 @@
+body {
+    background-color: #1a1a24;
+    color: #e2e8f0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 20px;
+}
+.tab-header {
+    margin-bottom: 20px;
+}
+.tab-btn {
+    background: #2d3748;
+    color: #a0aec0;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.tab-btn.active {
+    background: #3182ce;
+    color: white;
+}
+.tab-content {
+    display: none;
+}
+.tab-content.active {
+    display: block;
+}
+.ui-window, .ba-window {
+    background: rgba(12, 17, 29, 0.9);
+    border: 2px solid #2b6cb0;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+.input-group {
+    margin: 10px 0;
+}
+.input-group label {
+    display: inline-block;
+    width: 220px;
+}
+.input-group input {
+    background: #1a202c;
+    border: 1px solid #4a5568;
+    color: white;
+    padding: 5px;
+    border-radius: 3px;
+}
+.action-btn {
+    background: #38a169;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 3px;
+}
+/* Battle Analysis Table Grid Styling */
+.ba-summary {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #2b6cb0;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+.ba-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.9em;
+}
+.ba-table th {
+    background: #1a202c;
+    color: #63b3ed;
+    padding: 10px;
+    border-bottom: 2px solid #2b6cb0;
+}
+.ba-table td {
+    padding: 10px;
+    border-bottom: 1px solid #2d3748;
+}
+
+/* Styling additions for the input breakdown categories */
+.stat-section-title {
+    font-weight: bold;
+    color: #63b3ed;
+    border-left: 3px solid #3182ce;
+    padding-left: 8px;
+    margin: 20px 0 10px 0;
+    font-size: 0.95em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* MapleScouter Grid Alignment Integration */
+.scouter-grid-header {
+    display: grid;
+    grid-template-columns: 220px 100px 100px 120px;
+    gap: 10px;
+    font-weight: bold;
+    color: #63b3ed;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #2b6cb0;
+    padding-bottom: 5px;
+}
+.scouter-grid-row {
+    display: grid;
+    grid-template-columns: 220px 100px 100px 120px;
+    gap: 10px;
+    margin: 8px 0;
+    align-items: center;
+}
+.scouter-grid-row input {
+    background: #1a202c;
+    border: 1px solid #4a5568;
+    color: white;
+    padding: 5px;
+    border-radius: 3px;
+    width: 80px;
+}
+.grid-label {
+    font-size: 0.95em;
+}
