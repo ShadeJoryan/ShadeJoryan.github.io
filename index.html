@@ -1,18 +1,98 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0a0d14" />
-    <meta
-      name="description"
-      content="A local-first Shade character stat input page, ready for future damage simulation."
-    />
-    <title>Shade Lab — Character Input</title>
-    <script type="module" crossorigin src="/assets/index-C8qZxx3E.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-BXtB8vfz.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <title>Shade Damage Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Tab Navigation Header -->
+    <div class="tab-header">
+        <button class="tab-btn active" onclick="switchTab('scouter-tab')">Stat Scouter</button>
+        <button class="tab-btn" onclick="switchTab('sim-tab')">Run Simulation</button>
+    </div>
+
+    <!-- TAB 1: SCOUTER GRID INPUTS -->
+    <div id="scouter-tab" class="tab-content active">
+        <div class="ui-window">
+            <h3>Shade Character Statistics (MapleScouter Grid Mode)</h3>
+            
+            <div class="scouter-grid-header">
+                <span class="grid-label">Stat Name</span>
+                <span>Base Value</span>
+                <span>% Value</span>
+                <span>% Not Applied</span>
+            </div>
+
+            <div class="scouter-grid-row">
+                <label class="grid-label">STR (Main Stat):</label>
+                <input type="number" id="str-base" value="4388">
+                <input type="number" id="str-pct" value="205">
+                <input type="number" id="str-flat" value="710">
+            </div>
+
+            <div class="scouter-grid-row">
+                <label class="grid-label">DEX (Secondary):</label>
+                <input type="number" id="dex-base" value="7812">
+                <input type="number" id="dex-pct" value="784">
+                <input type="number" id="dex-flat" value="28770">
+            </div>
+
+            <div class="scouter-grid-row">
+                <label class="grid-label">Attack Power (ATT):</label>
+                <input type="number" id="att-base" value="4293">
+                <input type="number" id="att-pct" value="129">
+                <input type="number" id="att-flat" value="0">
+            </div>
+
+            <div class="stat-section-title">Combat Modifiers (Flat UI Inputs)</div>
+            <div class="input-group"><label>Damage %:</label><input type="number" id="stat-dmg" value="120"></div>
+            <div class="input-group"><label>Boss Damage %:</label><input type="number" id="stat-boss-dmg" value="544"></div>
+            <div class="input-group"><label>Final Damage %:</label><input type="number" id="stat-final-dmg" value="0"></div>
+            <div class="input-group"><label>Critical Damage %:</label><input type="number" id="stat-crit-dmg" value="132.9"></div>
+            <div class="input-group"><label>Ignore Enemy Defense (IED) %:</label><input type="number" id="stat-ied" value="97.26"></div>
+
+            <div class="stat-section-title">Target Boss Configuration</div>
+            <div class="input-group"><label>Enemy Base Defense %:</label><input type="number" id="enemy-def" value="300"></div>
+            
+            <div class="stat-section-title">Simulation Constraints</div>
+            <div class="input-group"><label>Simulation Duration (seconds):</label><input type="number" id="sim-duration" value="40"></div>
+        </div>
+    </div>
+
+    <!-- TAB 2: RUN SIMULATION -->
+    <div id="sim-tab" class="tab-content">
+        <div class="ui-window">
+            <h3>Simulation Controller</h3>
+            <button class="action-btn" onclick="runSimulation()">Start Analysis</button>
+        </div>
+
+        <div class="ba-window">
+            <div class="ba-summary">
+                <div class="ba-summary-item"><strong>Battle Duration:</strong> <span id="ba-time">0s</span></div>
+                <div class="ba-summary-item"><strong>Total Damage:</strong> <span id="ba-total-dmg">0</span></div>
+                <div class="ba-summary-item"><strong>Average Damage:</strong> <span id="ba-avg-dmg">0/s</span></div>
+            </div>
+
+            <table class="ba-table">
+                <thead>
+                    <tr>
+                        <th>Skill Name</th>
+                        <th>Cumulative Damage</th>
+                        <th>Contribution</th>
+                        <th>Avg Damage (sec)</th>
+                        <th>Times Used</th>
+                        <th>Avg Damage (hit)</th>
+                    </tr>
+                </thead>
+                <tbody id="ba-table-body">
+                    <!-- Dynamic rows generated via javascript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="simulator.js"></script>
+</body>
 </html>
