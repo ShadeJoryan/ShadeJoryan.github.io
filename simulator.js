@@ -60,8 +60,8 @@ function runSimulation() {
     const elemBracket = 0.5 * (1 + elemResist);
 
     // Core damage multiplier per 1% skill damage component before skill scaling
-    const baseDamageMultiplier = statBracket * attBracket * wepmodifier * dmgBracket * critBracket * defenseBracket * elemBracket * finalDmgPlaceholder;
-
+    //const baseDamageMultiplier = statBracket * attBracket * wepmodifier * dmgBracket * critBracket * defenseBracket * elemBracket * finalDmgPlaceholder;
+    const damageRange = statBracket * attBracket * wepmodifier * (1 + dmg) * finalDmgPlaceholder;
     let currentTime = 0;
     let totalDamageDealt = 0;
 
