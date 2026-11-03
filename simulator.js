@@ -50,7 +50,7 @@ function runSimulation() {
     const absoluteATT = (attBase * (1 + attPct)) + attFlat;
 
     const wepmodifier = 1.7; 
-    const finalDmgPlaceholder = 1.2; // Temporary level-diff scalar placeholder as requested
+    const finalDmgPlaceholder = 1 + 1.9603; // Temporary level-diff scalar placeholder as requested
 
     const statBracket = (4 * absoluteSTR) + absoluteDEX;
     const attBracket = absoluteATT / 100;
