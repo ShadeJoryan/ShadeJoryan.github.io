@@ -50,7 +50,7 @@ function runSimulation() {
     const absoluteATT = Math.floor(attBase * (1 + attPct)) + attFlat;
 
     const wepmodifier = 1.7; 
-    const finalDmgPlaceholder = 1 + 1.9603; // Temporary level-diff scalar placeholder as requested
+    const finalDmgPlaceholder = 1 + 1.9602924065; // Temporary level-diff scalar placeholder as requested
 
     const statBracket = (4 * absoluteSTR) + absoluteDEX;
     const attBracket = absoluteATT / 100;
@@ -60,8 +60,8 @@ function runSimulation() {
     const elemBracket = 0.5 * (1 + elemResist);
 
     // Core damage multiplier per 1% skill damage component before skill scaling
-    const baseDamageMultiplier = statBracket * attBracket * wepmodifier * dmgBracket * critBracket * defenseBracket * elemBracket * finalDmgPlaceholder;
-    const damageRange = statBracket * attBracket * wepmodifier * (1 + dmg) * finalDmgPlaceholder;
+    const baseDamageMultiplier = Math.round(Math.round(statBracket * attBracket * wepmodifier) * dmgBracket * critBracket * defenseBracket * elemBracket * finalDmgPlaceholder);
+    const damageRange = Math.round(Math.round(statBracket * attBracket * wepmodifier) * (1 + dmg) * finalDmgPlaceholder);
     let currentTime = 0;
     let totalDamageDealt = 0;
 
