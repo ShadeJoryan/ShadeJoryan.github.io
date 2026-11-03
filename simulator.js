@@ -45,9 +45,9 @@ function runSimulation() {
     //           * final-dmg 
     //           * skill-dmg%
 
-    const absoluteSTR = (strBase * (1 + strPct)) + strFlat;
-    const absoluteDEX = (dexBase * (1 + dexPct)) + dexFlat;
-    const absoluteATT = (attBase * (1 + attPct)) + attFlat;
+    const absoluteSTR = Math.floor(strBase * (1 + strPct)) + strFlat;
+    const absoluteDEX = Math.floor(dexBase * (1 + dexPct)) + dexFlat;
+    const absoluteATT = Math.floor(attBase * (1 + attPct)) + attFlat;
 
     const wepmodifier = 1.7; 
     const finalDmgPlaceholder = 1 + 1.9603; // Temporary level-diff scalar placeholder as requested
@@ -60,7 +60,7 @@ function runSimulation() {
     const elemBracket = 0.5 * (1 + elemResist);
 
     // Core damage multiplier per 1% skill damage component before skill scaling
-    //const baseDamageMultiplier = statBracket * attBracket * wepmodifier * dmgBracket * critBracket * defenseBracket * elemBracket * finalDmgPlaceholder;
+    const baseDamageMultiplier = statBracket * attBracket * wepmodifier * dmgBracket * critBracket * defenseBracket * elemBracket * finalDmgPlaceholder;
     const damageRange = statBracket * attBracket * wepmodifier * (1 + dmg) * finalDmgPlaceholder;
     let currentTime = 0;
     let totalDamageDealt = 0;
