@@ -3,14 +3,15 @@ function switchTab(tabId) {
     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
     document.getElementById(tabId).classList.add('active');
     
-    // Safety check to handle event target mapping across various browser engines
     if (event && event.target) {
         event.target.classList.add('active');
     }
 }
 
 function runSimulation() {
-    // 1. Parse MapleScouter Grid Inputs
+    // 1. Parse Inputs
+    const charLevel = parseFloat(document.getElementById('char-level').value) || 0;
+
     const strBase = parseFloat(document.getElementById('str-base').value) || 0;
     const strPct  = (parseFloat(document.getElementById('str-pct').value) || 0) / 100;
     const strFlat = parseFloat(document.getElementById('str-flat').value) || 0;
@@ -23,61 +24,70 @@ function runSimulation() {
     const attPct  = (parseFloat(document.getElementById('att-pct').value) || 0) / 100;
     const attFlat = parseFloat(document.getElementById('att-flat').value) || 0;
 
-    // Standard Modifiers
     const dmg = (parseFloat(document.getElementById('stat-dmg').value) || 0) / 100;
     const bossDmg = (parseFloat(document.getElementById('stat-boss-dmg').value) || 0) / 100;
-    const finalDmg = (parseFloat(document.getElementById('stat-final-dmg').value) || 0) / 100;
-    const critDmg = (parseFloat(document.getElementById('stat-crit-dmg').value) || 0) / 100;
+    const critDmg = (parseFloat(document.getElementById('stat-crit-dmg').value) || 0) / 100; // e.g. 132.9
     const ied = (parseFloat(document.getElementById('stat-ied').value) || 0) / 100;
+    
+    const elemResist = (parseFloat(document.getElementById('stat-elem-resist').value) || 0) / 100;
     const enemyDef = (parseFloat(document.getElementById('enemy-def').value) || 0) / 100;
+    const enemyLevel = parseFloat(document.getElementById('enemy-level').value) || 0;
     const maxTime = parseFloat(document.getElementById('sim-duration').value) || 0;
 
-    // 2. Official MapleStory Math Formula Parsing Block
-    // Calculated Stat = floor(Base * (1 + %)) + % Not Applied
-    const absoluteSTR = Math.floor(strBase * (1 + strPct)) + strFlat;
-    const absoluteDEX = Math.floor(dexBase * (1 + dexPct)) + dexFlat;
-    const absoluteATT = Math.floor(attBase * (1 + attPct)) + attFlat;
+    // 2. Direct Implementation of Your Custom Formula Structure:
+    // Equation: (4 * (STR_base * (1 + STR_pct) + STR_flat) + (DEX_base * (1 + DEX_pct) + DEX_flat)) 
+    //           * ((ATT_base * (1 + ATT_pct) + ATT_flat) / 100) 
+    //           * wepmodifier 
+    //           * (1 + stat-boss-dmg + stat-dmg) 
+    //           * (35 + stat-crit-dmg) 
+    //           * (1 - (enemy-def * (1 - stat-ied))) 
+    //           * (0.5 * (1 + stat-elem-resist)) 
+    //           * final-dmg 
+    //           * skill-dmg%
 
-    // Multipliers Specific to Shade's Knuckle layout profile
-    const weaponConstant = 1.7; 
-    const statMultiplier = (4 * absoluteSTR) + absoluteDEX;
+    const absoluteSTR = (strBase * (1 + strPct)) + strFlat;
+    const absoluteDEX = (dexBase * (1 + dexPct)) + dexFlat;
+    const absoluteATT = (attBase * (1 + attPct)) + attFlat;
 
-    // Calculate Core Baseline Damage range limits
-    const baseDamageRange = 0.01 * weaponConstant * statMultiplier * absoluteATT * (1 + dmg + bossDmg) * (1 + finalDmg);
-    
-    // Process Critical Hits and Boss Defenses 
-    const criticalDamageMultiplier = 1.35 + critDmg; 
-    const ignoreDefenseMultiplier = Math.max(0, 1 - (enemyDef * (1 - ied)));
+    const wepmodifier = 1.7; 
+    const finalDmgPlaceholder = 1.2; // Temporary level-diff scalar placeholder as requested
 
-    // Combined structural scalar for the simulation loop logic
-    const absoluteDamageMultiplier = baseDamageRange * criticalDamageMultiplier * ignoreDefenseMultiplier;
+    const statBracket = (4 * absoluteSTR) + absoluteDEX;
+    const attBracket = absoluteATT / 100;
+    const dmgBracket = 1 + bossDmg + dmg;
+    const critBracket = 35 + critDmg;
+    const defenseBracket = Math.max(0, 1 - (enemyDef * (1 - ied)));
+    const elemBracket = 0.5 * (1 + elemResist);
+
+    // Core damage multiplier per 1% skill damage component before skill scaling
+    const baseDamageMultiplier = statBracket * attBracket * wepmodifier * dmgBracket * critBracket * defenseBracket * elemBracket * finalDmgPlaceholder;
 
     let currentTime = 0;
     let totalDamageDealt = 0;
 
+    // Skill configuration: HEXA Spirit Claw
     const skillData = {
-        "Spirit Claw": { damage: 0, uses: 0, skillMultiplier: 8.5, delay: 0.8 },
-        "Fox Spirits (Proc)": { damage: 0, uses: 0, skillMultiplier: 2.2, delay: 0.0 }
+        "HEXA Spirit Claw": { 
+            damage: 0, 
+            uses: 0, 
+            skillMultiplier: 10.27, // 1027% expressed as decimal multiplier
+            hits: 13, 
+            delay: 0.42             // 420 milliseconds in seconds
+        }
     };
 
     // 3. Logic Simulation Loop
     while (currentTime < maxTime) {
-        let mainSkill = skillData["Spirit Claw"];
-        let baseSkillDamage = absoluteDamageMultiplier * mainSkill.skillMultiplier;
+        let skill = skillData["HEXA Spirit Claw"];
         
-        mainSkill.damage += baseSkillDamage;
-        mainSkill.uses += 1;
-        totalDamageDealt += baseSkillDamage;
+        // Damage calculation per skill activation considering multi-hit lines
+        let activationDamage = baseDamageMultiplier * skill.skillMultiplier * skill.hits;
+        
+        skill.damage += activationDamage;
+        skill.uses += 1;
+        totalDamageDealt += activationDamage;
 
-        if (Math.random() < 0.40) {
-            let procSkill = skillData["Fox Spirits (Proc)"];
-            let procDamage = absoluteDamageMultiplier * procSkill.skillMultiplier;
-            procSkill.damage += procDamage;
-            procSkill.uses += 1;
-            totalDamageDealt += procDamage;
-        }
-
-        currentTime += mainSkill.delay;
+        currentTime += skill.delay;
     }
 
     // 4. Update the Battle Analysis UI Tables
