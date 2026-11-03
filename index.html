@@ -18,6 +18,9 @@
         <div class="ui-window">
             <h3>Shade Character Statistics (MapleScouter Grid Mode)</h3>
             
+            <div class="stat-section-title">Character Details</div>
+            <div class="input-group"><label>Character Level:</label><input type="number" id="char-level" value="260"></div>
+
             <div class="scouter-grid-header">
                 <span class="grid-label">Stat Name</span>
                 <span>Base Value</span>
@@ -49,11 +52,20 @@
             <div class="stat-section-title">Combat Modifiers (Flat UI Inputs)</div>
             <div class="input-group"><label>Damage %:</label><input type="number" id="stat-dmg" value="120"></div>
             <div class="input-group"><label>Boss Damage %:</label><input type="number" id="stat-boss-dmg" value="544"></div>
-            <div class="input-group"><label>Final Damage %:</label><input type="number" id="stat-final-dmg" value="0"></div>
             <div class="input-group"><label>Critical Damage %:</label><input type="number" id="stat-crit-dmg" value="132.9"></div>
             <div class="input-group"><label>Ignore Enemy Defense (IED) %:</label><input type="number" id="stat-ied" value="97.26"></div>
+            <div class="input-group"><label>Buff Duration %:</label><input type="number" id="stat-buff-duration" value="0"></div>
+            <div class="input-group"><label>Cooldown Reduction (Seconds):</label><input type="number" id="stat-cdr-sec" value="0"></div>
+            <div class="input-group"><label>Cooldown Reduction (%):</label><input type="number" id="stat-cdr-pct" value="0"></div>
+            <div class="input-group"><label>Ignore Elemental Resistance %:</label><input type="number" id="stat-elem-resist" value="10"></div>
+            <div class="input-group"><label>Additional Status Damage %:</label><input type="number" id="stat-status-dmg" value="0"></div>
+
+            <div class="stat-section-title">Force Values</div>
+            <div class="input-group"><label>Arcane Force:</label><input type="number" id="arcane-force" value="1320"></div>
+            <div class="input-group"><label>Sacred Force:</label><input type="number" id="sacred-force" value="0"></div>
 
             <div class="stat-section-title">Target Boss Configuration</div>
+            <div class="input-group"><label>Enemy Level:</label><input type="number" id="enemy-level" value="265"></div>
             <div class="input-group"><label>Enemy Base Defense %:</label><input type="number" id="enemy-def" value="300"></div>
             
             <div class="stat-section-title">Simulation Constraints</div>
