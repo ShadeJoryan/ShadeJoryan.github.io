@@ -70,7 +70,7 @@ function runSimulation() {
         "HEXA Spirit Claw": { 
             damage: 0, 
             uses: 0, 
-            skillMultiplier: 10.27, // 1027% expressed as decimal multiplier
+            skillMultiplier: 12.56, // 1027% expressed as decimal multiplier
             hits: 13, 
             delay: 0.42             // 420 milliseconds in seconds
         }
