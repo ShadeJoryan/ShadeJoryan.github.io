@@ -104,7 +104,25 @@
             </table>
         </div>
     </div>
+<script>
+        window.addEventListener('DOMContentLoaded', () => {
+            // find inputs
+            const inputs = document.querySelectorAll('input[type="number"]');
+            
+            // save for values in browser memory
+            inputs.forEach(input => {
+                const savedValue = localStorage.getItem(`shade_sim_${input.id}`);
+                if (savedValue !== null) {
+                    input.value = savedValue;
+                }
 
+                // save value when inputted
+                input.addEventListener('input', () => {
+                    localStorage.setItem(`shade_sim_${input.id}`, input.value);
+                });
+            });
+        });
+    </script>
     <script src="simulator.js"></script>
 </body>
 </html>
