@@ -55,7 +55,7 @@ function runSimulation() {
     const statBracket = (4 * absoluteSTR) + absoluteDEX;
     const attBracket = absoluteATT / 100;
     const dmgBracket = 1 + bossDmg + dmg;
-    const critBracket = 1.35 + critDmg;
+    const critBracket = 1.5 + critDmg;
     const defenseBracket = Math.max(0, 1 - (enemyDef * (1 - ied)));
     const elemBracket = 0.5 * (1 + elemResist);
 
