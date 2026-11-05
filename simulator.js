@@ -1,15 +1,31 @@
+// RUNS IMMEDIATELY: Restores the last active tab from memory on page refresh
+document.addEventListener('DOMContentLoaded', () => {
+    const savedTab = localStorage.getItem('shade_sim_active_tab');
+    if (savedTab) {
+        switchTab(savedTab);
+    }
+});
+
 function switchTab(tabId) {
+    // 1. Hide all tab panes and clear active classes from buttons
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    
+    // 2. Activate target tab content window
     document.getElementById(tabId).classList.add('active');
     
-    if (event && event.target) {
-        event.target.classList.add('active');
+    // 3. Find the exact navigation button matching this tab ID and mark it active
+    const associatedBtn = document.querySelector(`button[onclick*="${tabId}"]`);
+    if (associatedBtn) {
+        associatedBtn.classList.add('active');
     }
+
+    // 4. Save the current tab view to browser memory
+    localStorage.setItem('shade_sim_active_tab', tabId);
 }
 
 function runSimulation() {
-    // 1. Parse Inputs
+    // 1. Parse Inputs (Will automatically look at the auto-restored values inside the HTML)
     const charLevel = parseFloat(document.getElementById('char-level').value) || 0;
 
     const strBase = parseFloat(document.getElementById('str-base').value) || 0;
@@ -26,7 +42,7 @@ function runSimulation() {
 
     const dmg = (parseFloat(document.getElementById('stat-dmg').value) || 0) / 100;
     const bossDmg = (parseFloat(document.getElementById('stat-boss-dmg').value) || 0) / 100;
-    const critDmg = (parseFloat(document.getElementById('stat-crit-dmg').value) || 0) / 100; // e.g. 132.9
+    const critDmg = (parseFloat(document.getElementById('stat-crit-dmg').value) || 0) / 100; 
     const ied = (parseFloat(document.getElementById('stat-ied').value) || 0) / 100;
     
     const elemResist = (parseFloat(document.getElementById('stat-elem-resist').value) || 0) / 100;
@@ -34,34 +50,29 @@ function runSimulation() {
     const enemyLevel = parseFloat(document.getElementById('enemy-level').value) || 0;
     const maxTime = parseFloat(document.getElementById('sim-duration').value) || 0;
 
-    // 2. Direct Implementation of Your Custom Formula Structure:
-    // Equation: (4 * (STR_base * (1 + STR_pct) + STR_flat) + (DEX_base * (1 + DEX_pct) + DEX_flat)) 
-    //           * ((ATT_base * (1 + ATT_pct) + ATT_flat) / 100) 
-    //           * wepmodifier 
-    //           * (1 + stat-boss-dmg + stat-dmg) 
-    //           * (35 + stat-crit-dmg) 
-    //           * (1 - (enemy-def * (1 - stat-ied))) 
-    //           * (0.5 * (1 + stat-elem-resist)) 
-    //           * final-dmg 
-    //           * skill-dmg%
+    // Guard statement to prevent browser freezing if duration is 0 or empty
+    if (maxTime <= 0) {
+        alert("Please specify a simulation duration greater than 0 seconds.");
+        return;
+    }
 
-    const absoluteSTR = Math.floor(strBase * (1 + strPct)) + strFlat;
-    const absoluteDEX = Math.floor(dexBase * (1 + dexPct)) + dexFlat;
-    const absoluteATT = Math.floor(attBase * (1 + attPct)) + attFlat;
+    // 2. Direct Implementation of Your Custom Formula Structure:
+    const absoluteSTR = (strBase * (1 + strPct)) + strFlat;
+    const absoluteDEX = (dexBase * (1 + dexPct)) + dexFlat;
+    const absoluteATT = (attBase * (1 + attPct)) + attFlat;
 
     const wepmodifier = 1.7; 
-    const finalDmgPlaceholder = 1 + 1.9602924065; // Temporary level-diff scalar placeholder as requested
+    const finalDmgPlaceholder = 1.2; 
 
     const statBracket = (4 * absoluteSTR) + absoluteDEX;
     const attBracket = absoluteATT / 100;
     const dmgBracket = 1 + bossDmg + dmg;
-    const critBracket = 1.5 + critDmg;
+    const critBracket = 35 + critDmg;
     const defenseBracket = Math.max(0, 1 - (enemyDef * (1 - ied)));
     const elemBracket = 0.5 * (1 + elemResist);
 
-    // Core damage multiplier per 1% skill damage component before skill scaling
-    const baseDamageMultiplier = Math.round(Math.round(statBracket * attBracket * wepmodifier) * dmgBracket * critBracket * defenseBracket * elemBracket * finalDmgPlaceholder);
-    const damageRange = Math.round(Math.round(statBracket * attBracket * wepmodifier) * (1 + dmg) * finalDmgPlaceholder);
+    const baseDamageMultiplier = statBracket * attBracket * wepmodifier * dmgBracket * critBracket * defenseBracket * elemBracket * finalDmgPlaceholder;
+
     let currentTime = 0;
     let totalDamageDealt = 0;
 
@@ -70,9 +81,9 @@ function runSimulation() {
         "HEXA Spirit Claw": { 
             damage: 0, 
             uses: 0, 
-            skillMultiplier: 12.56, // 1027% expressed as decimal multiplier
+            skillMultiplier: 10.27, 
             hits: 13, 
-            delay: 0.42             // 420 milliseconds in seconds
+            delay: 0.42             
         }
     };
 
@@ -80,7 +91,6 @@ function runSimulation() {
     while (currentTime < maxTime) {
         let skill = skillData["HEXA Spirit Claw"];
         
-        // Damage calculation per skill activation considering multi-hit lines
         let activationDamage = baseDamageMultiplier * skill.skillMultiplier * skill.hits;
         
         skill.damage += activationDamage;
