@@ -151,7 +151,7 @@ function runSimulation() {
     // 3. Run simulation automatically for all 3 modes
     for (let [modeKey, cfg] of Object.entries(modeConfigs)) {
         let critBracket = cfg.critBase + critDmg;
-        let baseDamageMultiplier = statBracket * attBracket * wepmodifier * dmgBracket * critBracket * defenseBracket * elemBracket * finalDmgPlaceholder;
+        let baseDamageMultiplier = Math.round(Math.round(statBracket * attBracket * wepmodifier) * dmgBracket * critBracket * defenseBracket * elemBracket * finalDmgPlaceholder);
 
         let currentTime = 0;
         let totalDamageDealt = 0;
