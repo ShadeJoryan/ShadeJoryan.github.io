@@ -171,7 +171,7 @@ function runSimulation() {
             let skill = skillData["HEXA Spirit Claw"];
             
             // Using baseDamageMultiplier loop structure matching your formula style adjusted by mastery/mode scaling
-            let activationDamage = baseDamageMultiplier * skill.skillMultiplier * skill.hits * (cfg.mastery / 0.95); 
+            let activationDamage = baseDamageMultiplier * skill.skillMultiplier * skill.hits * (cfg.mastery); 
             
             skill.damage += activationDamage;
             skill.uses += 1;
