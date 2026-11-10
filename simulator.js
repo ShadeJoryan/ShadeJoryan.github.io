@@ -93,10 +93,9 @@ let simulationResultsCache = {
     modes: {}
 };
 
-function runSimulation() {
+async function runSimulation() {
     // 1. Parse Inputs
     const charLevel = parseFloat(document.getElementById('char-level').value) || 0;
-
     const strBase = parseFloat(document.getElementById('str-base').value) || 0;
     const strPct  = (parseFloat(document.getElementById('str-pct').value) || 0) / 100;
     const strFlat = parseFloat(document.getElementById('str-flat').value) || 0;
@@ -130,7 +129,23 @@ function runSimulation() {
 
     const wepmodifier = 1.7; 
     const finalDmg = 1 + ((100 * ((1 + 45/100) * (1 + 10/100) * (1 + 15/100) * (1 + 10/100) * (1 + 17/100) * (1 + 14/100) * (1 + 10/100)) - 100) / 100);
-    const levelFinalDamage = 1.1;
+    const levelDiff = charLevel - enemyLevel;
+    
+let levelFinalDamage = 1.1;
+    try {
+        const response = await fetch('level_deltas.json'); 
+        const data = await response.json();
+        
+        if (levelDiff >= 5) {
+            levelFinalDamage = data.levelDifferences["5_plus"];
+        } else if (levelDiff <= -5) {
+            levelFinalDamage = data.levelDifferences["-5_minus"];
+        } else {
+            levelFinalDamage = data.levelDifferences[levelDiff.toString()] || 1.1;
+        }
+    } catch (error) {
+        console.warn("could not load level_deltas.json, using default value =1.1");
+    }
 
     const statBracket = (4 * absoluteSTR) + absoluteDEX;
     const attBracket = absoluteATT / 100;
