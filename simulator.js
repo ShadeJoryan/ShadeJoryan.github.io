@@ -145,7 +145,7 @@ function importProfile() {
             const element = document.getElementById(id);
             if (element) {
                 element.value = importedData[id];
-                Update LocalStorage tracking simultaneously so the memory updates instantly
+               // Update LocalStorage tracking simultaneously so the memory updates instantly
                 localStorage.setItem(`shade_sim_${id}`, importedData[id]);
             }
         });
