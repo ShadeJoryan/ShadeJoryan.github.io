@@ -123,6 +123,26 @@
             });
         });
     </script>
+    <script>
+            window.addEventListener('DOMContentLoaded', () => {
+            //Find input elements
+            const inputs = document.querySelectorAll('input[type="number"]');
+            
+            // Loop through saved values
+            inputs.forEach(input => {
+                const savedValue = localStorage.getItem(`shade_sim_${input.id}`);
+                if (savedValue !== null) {
+                    input.value = savedValue;
+                }
+                
+                // Whenever the user types or updates an input, save it instantly
+                input.addEventListener('input', () => {
+                    localStorage.setItem(`shade_sim_${input.id}`, input.value);
+                });
+            });
+        });
+    </script>
+    <script src="simulator.js"></script>
     <script src="simulator.js"></script>
 </body>
 </html>
