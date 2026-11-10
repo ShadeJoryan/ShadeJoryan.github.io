@@ -217,7 +217,7 @@ function renderSimulationResults() {
         
         let contribution = ((data.damage / totalDamageDealt) * 100).toFixed(2);
         let avgSec = (data.damage / maxTime).toFixed(0);
-        let avgHit = (data.damage / data.uses).toFixed(0);
+        let avgHit = Math.floor(data.damage / data.uses).toFixed(0);
         let totalLines = data.uses * data.hits;
         
         // Compute min/max line damage directly from base multipliers and skill multipliers without damageRange variables
@@ -230,6 +230,7 @@ function renderSimulationResults() {
             <td>${contribution}%</td>
             <td>${parseInt(avgSec).toLocaleString()}/s</td>
             <td>${data.uses}</td>
+            <td>${avgHit.toLocaleString()}</td>
             <td>${totalLines.toLocaleString()}</td>
             <td>${minLineDmg.toLocaleString()}</td>
             <td>${maxLineDmg.toLocaleString()}</td>
