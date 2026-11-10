@@ -87,7 +87,19 @@
     <div id="sim-tab" class="tab-content">
         <div class="ui-window">
             <h3>Simulation Controller</h3>
-            <button class="action-btn" onclick="runSimulation()">Start Analysis</button>
+            <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 15px;">
+                <button class="action-btn" onclick="runSimulation()">Start Analysis</button>
+                
+                <!-- View Mode Selector (Only used to look at results after running) -->
+                <div class="input-group" style="margin: 0; display: flex; align-items: center; gap: 10px;">
+                    <label style="width: auto; color: #63b3ed; font-weight: bold;">View Results Mode:</label>
+                    <select id="view-damage-mode" onchange="renderSimulationResults()" style="background:#1a202c; color:white; border:1px solid #4a5568; padding:5px; border-radius:3px;">
+                        <option value="avg" selected>Average Damage</option>
+                        <option value="max">Maximum Damage</option>
+                        <option value="min">Minimum Damage</option>
+                    </select>
+                </div>
+            </div>
         </div>
 
         <div class="ba-window">
@@ -105,7 +117,9 @@
                         <th>Contribution</th>
                         <th>Avg Damage (sec)</th>
                         <th>Times Used</th>
-                        <th>Avg Damage (hit)</th>
+                        <th>Total Lines Hit</th>
+                        <th>Min Dmg / Line</th>
+                        <th>Max Dmg / Line</th>
                     </tr>
                 </thead>
                 <tbody id="ba-table-body">
