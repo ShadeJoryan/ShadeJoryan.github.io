@@ -126,35 +126,35 @@ function runSimulation() {
         tableBody.innerHTML += row;
     }
 }
-//function importProfile() {
- //   const inputBox = document.getElementById('profile-string-box');
-//    const rawValue = inputBox.value.trim();
+function importProfile() {
+    const inputBox = document.getElementById('profile-string-box');
+    const rawValue = inputBox.value.trim();
     
-//    if (!rawValue) {
-//        alert("Please paste a valid profile data string into the text window first.");
- //       return;
-//    }
+    if (!rawValue) {
+        alert("Please paste a valid profile data string into the text window first.");
+        return;
+    }
     
-//    try {
-//        // Decode the base64 string back into readable JSON configuration blocks
-//        const decodedString = decodeURIComponent(escape(atob(rawValue)));
-//        const importedData = JSON.parse(decodedString);
+    try {
+        // Decode the base64 string back into readable JSON configuration blocks
+        const decodedString = decodeURIComponent(escape(atob(rawValue)));
+        const importedData = JSON.parse(decodedString);
         
         // Loop through the data parameters and inject them back into matching HTML input positions
-//        Object.keys(importedData).forEach(id => {
-  //          const element = document.getElementById(id);
-   //         if (element) {
-    //            element.value = importedData[id];
-                // Update LocalStorage tracking simultaneously so the memory updates instantly
-     //           localStorage.setItem(`shade_sim_${id}`, importedData[id]);
-    //        }
-    //    });
+        Object.keys(importedData).forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.value = importedData[id];
+                Update LocalStorage tracking simultaneously so the memory updates instantly
+                localStorage.setItem(`shade_sim_${id}`, importedData[id]);
+            }
+        });
         
-  //      alert("Character profile settings updated successfully!");
-  //      inputBox.value = ""; // Clear text field window after successful ingestion
+        alert("Character profile settings updated successfully!");
+        inputBox.value = ""; // Clear text field window after successful ingestion
         
-//   } catch (error) {
- //       alert("Error: Invalid profile layout code string. Make sure you copied the text completely.");
- //       console.error(error);
- //   }
-//}
+   } catch (error) {
+        alert("Error: Invalid profile layout code string. Make sure you copied the text completely.");
+        console.error(error);
+    }
+}
