@@ -130,6 +130,7 @@ function runSimulation() {
 
     const wepmodifier = 1.7; 
     const finalDmgPlaceholder = 2.9602924065; 
+    const levelFinalDamage = 1.1;
 
     const statBracket = (4 * absoluteSTR) + absoluteDEX;
     const attBracket = absoluteATT / 100;
@@ -137,9 +138,6 @@ function runSimulation() {
     const defenseBracket = Math.max(0, 1 - (enemyDef * (1 - ied)));
     const elemBracket = 0.5 * (1 + elemResist);
 
-    const damageRange = Math.round(Math.round(statBracket * attBracket * wepmodifier) * (1 + dmg) * finalDmgPlaceholder); 
-    const damageRangeBoss = Math.round(Math.round(statBracket * attBracket * wepmodifier) * dmgBracket * finalDmgPlaceholder);
-    const levelFinalDamage = 1.1
     const modeConfigs = {
         avg: { critBase: 1.35, mastery: 0.95 },
         max: { critBase: 1.50, mastery: 1.00 },
@@ -170,7 +168,6 @@ function runSimulation() {
         while (currentTime < maxTime) {
             let skill = skillData["HEXA Spirit Claw"];
             
-            // Using baseDamageMultiplier loop structure matching your formula style adjusted by mastery/mode scaling
             let activationDamage = baseDamageMultiplier * skill.skillMultiplier * skill.hits * (cfg.mastery); 
             
             skill.damage += activationDamage;
@@ -183,7 +180,8 @@ function runSimulation() {
         simulationResultsCache.modes[modeKey] = {
             totalDamageDealt: totalDamageDealt,
             skillData: skillData,
-            damageRange: damageRange
+            baseMultiplier: baseDamageMultiplier,
+            mastery: cfg.mastery
         };
     }
 
@@ -200,7 +198,10 @@ function renderSimulationResults() {
 
     const totalDamageDealt = modeResult.totalDamageDealt;
     const skillData = modeResult.skillData;
-    const damageRange = modeResult.damageRange;
+
+    // Grab minimum and maximum mode results for line calculation bounds
+    const minMode = simulationResultsCache.modes['min'];
+    const maxMode = simulationResultsCache.modes['max'];
 
     // Update summary table headers
     document.getElementById('ba-time').innerText = `${maxTime}s`;
@@ -218,8 +219,10 @@ function renderSimulationResults() {
         let avgSec = (data.damage / maxTime).toFixed(0);
         let avgHit = (data.damage / data.uses).toFixed(0);
         let totalLines = data.uses * data.hits;
-        let minLineDmg = Math.floor((damageRange * data.skillMultiplier) * 0.90);
-        let maxLineDmg = Math.floor((damageRange * data.skillMultiplier) * 1.00);
+        
+        // Compute min/max line damage directly from base multipliers and skill multipliers without damageRange variables
+        let minLineDmg = minMode ? Math.floor(minMode.baseMultiplier * data.skillMultiplier * minMode.mastery) : 0;
+        let maxLineDmg = maxMode ? Math.floor(maxMode.baseMultiplier * data.skillMultiplier * maxMode.mastery) : 0;
 
         let row = `<tr>
             <td style="color:#63b3ed; font-weight:bold;">${name}</td>
