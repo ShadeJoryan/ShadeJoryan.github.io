@@ -139,7 +139,7 @@ function runSimulation() {
 
     const damageRange = Math.round(Math.round(statBracket * attBracket * wepmodifier) * (1 + dmg) * finalDmgPlaceholder); 
     const damageRangeBoss = Math.round(Math.round(statBracket * attBracket * wepmodifier) * dmgBracket * finalDmgPlaceholder);
-
+    const levelFinalDamage = 1.1
     const modeConfigs = {
         avg: { critBase: 1.35, mastery: 0.95 },
         max: { critBase: 1.50, mastery: 1.00 },
@@ -152,7 +152,7 @@ function runSimulation() {
     // 3. Run simulation automatically for all 3 modes
     for (let [modeKey, cfg] of Object.entries(modeConfigs)) {
         let critBracket = cfg.critBase + critDmg;
-        let baseDamageMultiplier = Math.round(Math.round(statBracket * attBracket * wepmodifier) * dmgBracket * critBracket * defenseBracket * elemBracket * finalDmgPlaceholder);
+        let baseDamageMultiplier = Math.round(Math.round(statBracket * attBracket * wepmodifier) * dmgBracket * critBracket * defenseBracket * elemBracket * finalDmgPlaceholder * levelFinalDamage);
 
         let currentTime = 0;
         let totalDamageDealt = 0;
@@ -161,7 +161,7 @@ function runSimulation() {
             "HEXA Spirit Claw": { 
                 damage: 0, 
                 uses: 0, 
-                skillMultiplier: 12.56, 
+                skillMultiplier: 12.562, 
                 hits: 13, 
                 delay: 0.42             
             }
