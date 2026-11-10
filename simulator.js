@@ -4,28 +4,91 @@ document.addEventListener('DOMContentLoaded', () => {
     if (savedTab) {
         switchTab(savedTab);
     }
+
+    // Auto-load and sync all number input values from localStorage
+    const inputs = document.querySelectorAll('input[type="number"]');
+    inputs.forEach(input => {
+        const savedValue = localStorage.getItem(`shade_sim_${input.id}`);
+        if (savedValue !== null) {
+            input.value = savedValue;
+        }
+
+        input.addEventListener('input', () => {
+            localStorage.setItem(`shade_sim_${input.id}`, input.value);
+        });
+    });
 });
 
 function switchTab(tabId) {
-    // 1. Hide all tab panes and clear active classes from buttons
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
     
-    // 2. Activate target tab content window
     document.getElementById(tabId).classList.add('active');
     
-    // 3. Find the exact navigation button matching this tab ID and mark it active
     const associatedBtn = document.querySelector(`button[onclick*="${tabId}"]`);
     if (associatedBtn) {
         associatedBtn.classList.add('active');
     }
 
-    // 4. Save the current tab view to browser memory
     localStorage.setItem('shade_sim_active_tab', tabId);
 }
 
+function exportProfile() {
+    const inputs = document.querySelectorAll('input[type="number"]');
+    const profileData = {};
+    
+    inputs.forEach(input => {
+        if (input.id) {
+            profileData[input.id] = input.value;
+        }
+    });
+
+    try {
+        const jsonString = JSON.stringify(profileData);
+        const encodedString = btoa(unescape(encodeURIComponent(jsonString)));
+        const textBox = document.getElementById('profile-string-box');
+        textBox.value = encodedString;
+        textBox.select();
+        document.execCommand('copy');
+        alert("Profile exported and copied to clipboard successfully!");
+    } catch (error) {
+        alert("Error exporting profile data.");
+        console.error(error);
+    }
+}
+
+function importProfile() {
+    const inputBox = document.getElementById('profile-string-box');
+    const rawValue = inputBox.value.trim();
+    
+    if (!rawValue) {
+        alert("Please paste a valid profile data string into the text window first.");
+        return;
+    }
+    
+    try {
+        const decodedString = decodeURIComponent(escape(atob(rawValue)));
+        const importedData = JSON.parse(decodedString);
+        
+        Object.keys(importedData).forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.value = importedData[id];
+                // Fixed syntax error here by adding comment slashes:
+                localStorage.setItem(`shade_sim_${id}`, importedData[id]);
+            }
+        });
+        
+        alert("Character profile settings updated successfully!");
+        inputBox.value = ""; 
+        
+   } catch (error) {
+        alert("Error: Invalid profile layout code string. Make sure you copied the text completely.");
+        console.error(error);
+    }
+}
+
 function runSimulation() {
-    // 1. Parse Inputs (Will automatically look at the auto-restored values inside the HTML)
     const charLevel = parseFloat(document.getElementById('char-level').value) || 0;
 
     const strBase = parseFloat(document.getElementById('str-base').value) || 0;
@@ -50,13 +113,11 @@ function runSimulation() {
     const enemyLevel = parseFloat(document.getElementById('enemy-level').value) || 0;
     const maxTime = parseFloat(document.getElementById('sim-duration').value) || 0;
 
-    // Guard statement to prevent browser freezing if duration is 0 or empty
     if (maxTime <= 0) {
         alert("Please specify a simulation duration greater than 0 seconds.");
         return;
     }
 
-    // 2. Direct Implementation of Your Custom Formula Structure:
     const absoluteSTR = (strBase * (1 + strPct)) + strFlat;
     const absoluteDEX = (dexBase * (1 + dexPct)) + dexFlat;
     const absoluteATT = (attBase * (1 + attPct)) + attFlat;
@@ -76,7 +137,6 @@ function runSimulation() {
     let currentTime = 0;
     let totalDamageDealt = 0;
 
-    // Skill configuration: HEXA Spirit Claw
     const skillData = {
         "HEXA Spirit Claw": { 
             damage: 0, 
@@ -87,7 +147,6 @@ function runSimulation() {
         }
     };
 
-    // 3. Logic Simulation Loop
     while (currentTime < maxTime) {
         let skill = skillData["HEXA Spirit Claw"];
         
@@ -100,7 +159,6 @@ function runSimulation() {
         currentTime += skill.delay;
     }
 
-    // 4. Update the Battle Analysis UI Tables
     document.getElementById('ba-time').innerText = `${maxTime}s`;
     document.getElementById('ba-total-dmg').innerText = Math.floor(totalDamageDealt).toLocaleString();
     document.getElementById('ba-avg-dmg').innerText = `${Math.floor(totalDamageDealt / maxTime).toLocaleString()}/s`;
@@ -124,37 +182,5 @@ function runSimulation() {
             <td>${parseInt(avgHit).toLocaleString()}</td>
         </tr>`;
         tableBody.innerHTML += row;
-    }
-}
-function importProfile() {
-    const inputBox = document.getElementById('profile-string-box');
-    const rawValue = inputBox.value.trim();
-    
-    if (!rawValue) {
-        alert("Please paste a valid profile data string into the text window first.");
-        return;
-    }
-    
-    try {
-        // Decode the base64 string back into readable JSON configuration blocks
-        const decodedString = decodeURIComponent(escape(atob(rawValue)));
-        const importedData = JSON.parse(decodedString);
-        
-        // Loop through the data parameters and inject them back into matching HTML input positions
-        Object.keys(importedData).forEach(id => {
-            const element = document.getElementById(id);
-            if (element) {
-                element.value = importedData[id];
-               // Update LocalStorage tracking simultaneously so the memory updates instantly
-                localStorage.setItem(`shade_sim_${id}`, importedData[id]);
-            }
-        });
-        
-        alert("Character profile settings updated successfully!");
-        inputBox.value = ""; // Clear text field window after successful ingestion
-        
-   } catch (error) {
-        alert("Error: Invalid profile layout code string. Make sure you copied the text completely.");
-        console.error(error);
     }
 }
