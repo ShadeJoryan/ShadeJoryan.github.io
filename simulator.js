@@ -1,11 +1,11 @@
-// RUNS IMMEDIATELY: Restores the last active tab from memory on page refresh
+// RUNS IMMEDIATELY: Restores the last active tab from memory
 document.addEventListener('DOMContentLoaded', () => {
     const savedTab = localStorage.getItem('shade_sim_active_tab');
     if (savedTab) {
         switchTab(savedTab);
     }
 
-    // Auto-load and sync all number input values from localStorage
+    // Auto-load from localStorage
     const inputs = document.querySelectorAll('input[type="number"]');
     inputs.forEach(input => {
         const savedValue = localStorage.getItem(`shade_sim_${input.id}`);
@@ -62,7 +62,7 @@ function importProfile() {
     const rawValue = inputBox.value.trim();
     
     if (!rawValue) {
-        alert("Please paste a valid profile data string into the text window first.");
+        alert("Please paste a valid profile data string.");
         return;
     }
     
@@ -74,21 +74,27 @@ function importProfile() {
             const element = document.getElementById(id);
             if (element) {
                 element.value = importedData[id];
-                // Fixed syntax error here by adding comment slashes:
                 localStorage.setItem(`shade_sim_${id}`, importedData[id]);
             }
         });
         
-        alert("Character profile settings updated successfully!");
+        alert("Character profile updated successfully!");
         inputBox.value = ""; 
         
    } catch (error) {
-        alert("Error: Invalid profile layout code string. Make sure you copied the text completely.");
+        alert("Error: Invalid profile layout code string.");
         console.error(error);
     }
 }
 
+// Global cache to hold simulation results across Average, Maximum, and Minimum modes
+let simulationResultsCache = {
+    duration: 0,
+    modes: {}
+};
+
 function runSimulation() {
+    // 1. Parse Inputs
     const charLevel = parseFloat(document.getElementById('char-level').value) || 0;
 
     const strBase = parseFloat(document.getElementById('str-base').value) || 0;
@@ -128,43 +134,79 @@ function runSimulation() {
     const statBracket = (4 * absoluteSTR) + absoluteDEX;
     const attBracket = absoluteATT / 100;
     const dmgBracket = 1 + bossDmg + dmg;
-    const critBracket = 1.35 + critDmg;
     const defenseBracket = Math.max(0, 1 - (enemyDef * (1 - ied)));
     const elemBracket = 0.5 * (1 + elemResist);
 
-    const baseDamageMultiplier = statBracket * attBracket * wepmodifier * dmgBracket * critBracket * defenseBracket * elemBracket * finalDmgPlaceholder;
-    
     const damageRange = Math.round(Math.round(statBracket * attBracket * wepmodifier) * (1 + dmg) * finalDmgPlaceholder); 
-    
-    let currentTime = 0;
-    let totalDamageDealt = 0;
 
-    const skillData = {
-        "HEXA Spirit Claw": { 
-            damage: 0, 
-            uses: 0, 
-            skillMultiplier: 10.27, 
-            hits: 13, 
-            delay: 0.42             
-        }
+    const modeConfigs = {
+        avg: { critBase: 1.35, mastery: 0.95 },
+        max: { critBase: 1.50, mastery: 1.00 },
+        min: { critBase: 1.20, mastery: 0.90 }
     };
 
-    while (currentTime < maxTime) {
-        let skill = skillData["HEXA Spirit Claw"];
-        
-        let activationDamage = baseDamageMultiplier * skill.skillMultiplier * skill.hits;
-        
-        skill.damage += activationDamage;
-        skill.uses += 1;
-        totalDamageDealt += activationDamage;
+    simulationResultsCache.duration = maxTime;
+    simulationResultsCache.modes = {};
 
-        currentTime += skill.delay;
+    // 3. Run simulation automatically for all 3 modes
+    for (let [modeKey, cfg] of Object.entries(modeConfigs)) {
+        let critBracket = cfg.critBase + critDmg;
+        let baseDamageMultiplier = statBracket * attBracket * wepmodifier * dmgBracket * critBracket * defenseBracket * elemBracket * finalDmgPlaceholder;
+
+        let currentTime = 0;
+        let totalDamageDealt = 0;
+
+        let skillData = {
+            "HEXA Spirit Claw": { 
+                damage: 0, 
+                uses: 0, 
+                skillMultiplier: 10.27, 
+                hits: 13, 
+                delay: 0.42             
+            }
+        };
+
+        while (currentTime < maxTime) {
+            let skill = skillData["HEXA Spirit Claw"];
+            
+            // Using baseDamageMultiplier loop structure matching your formula style adjusted by mastery/mode scaling
+            let activationDamage = baseDamageMultiplier * skill.skillMultiplier * skill.hits * (cfg.mastery / 0.95); 
+            
+            skill.damage += activationDamage;
+            skill.uses += 1;
+            totalDamageDealt += activationDamage;
+
+            currentTime += skill.delay;
+        }
+
+        simulationResultsCache.modes[modeKey] = {
+            totalDamageDealt: totalDamageDealt,
+            skillData: skillData,
+            damageRange: damageRange
+        };
     }
 
+    // 4. Trigger render using the dropdown choice on the simulation tab
+    renderSimulationResults();
+}
+
+function renderSimulationResults() {
+    const selectedMode = document.getElementById('view-damage-mode').value;
+    const modeResult = simulationResultsCache.modes[selectedMode];
+    const maxTime = simulationResultsCache.duration;
+
+    if (!modeResult || maxTime <= 0) return;
+
+    const totalDamageDealt = modeResult.totalDamageDealt;
+    const skillData = modeResult.skillData;
+    const damageRange = modeResult.damageRange;
+
+    // Update summary table headers
     document.getElementById('ba-time').innerText = `${maxTime}s`;
     document.getElementById('ba-total-dmg').innerText = Math.floor(totalDamageDealt).toLocaleString();
     document.getElementById('ba-avg-dmg').innerText = `${Math.floor(totalDamageDealt / maxTime).toLocaleString()}/s`;
 
+    // Populate skill table rows including total lines hit, min damage/line, and max damage/line
     const tableBody = document.getElementById('ba-table-body');
     tableBody.innerHTML = ""; 
 
@@ -174,6 +216,9 @@ function runSimulation() {
         let contribution = ((data.damage / totalDamageDealt) * 100).toFixed(2);
         let avgSec = (data.damage / maxTime).toFixed(0);
         let avgHit = (data.damage / data.uses).toFixed(0);
+        let totalLines = data.uses * data.hits;
+        let minLineDmg = Math.floor((damageRange * data.skillMultiplier) * 0.90);
+        let maxLineDmg = Math.floor((damageRange * data.skillMultiplier) * 1.00);
 
         let row = `<tr>
             <td style="color:#63b3ed; font-weight:bold;">${name}</td>
@@ -181,7 +226,9 @@ function runSimulation() {
             <td>${contribution}%</td>
             <td>${parseInt(avgSec).toLocaleString()}/s</td>
             <td>${data.uses}</td>
-            <td>${parseInt(avgHit).toLocaleString()}</td>
+            <td>${totalLines.toLocaleString()}</td>
+            <td>${minLineDmg.toLocaleString()}</td>
+            <td>${maxLineDmg.toLocaleString()}</td>
         </tr>`;
         tableBody.innerHTML += row;
     }
