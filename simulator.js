@@ -123,7 +123,7 @@ function runSimulation() {
     const absoluteATT = (attBase * (1 + attPct)) + attFlat;
 
     const wepmodifier = 1.7; 
-    const finalDmgPlaceholder = 1.2; 
+    const finalDmgPlaceholder = 1.9603; 
 
     const statBracket = (4 * absoluteSTR) + absoluteDEX;
     const attBracket = absoluteATT / 100;
@@ -133,7 +133,9 @@ function runSimulation() {
     const elemBracket = 0.5 * (1 + elemResist);
 
     const baseDamageMultiplier = statBracket * attBracket * wepmodifier * dmgBracket * critBracket * defenseBracket * elemBracket * finalDmgPlaceholder;
-
+    
+    const damageRange = Math.round(Math.round(statBracket * attBracket * wepmodifier) * (1 + dmg) * finalDmgPlaceholder); 
+    
     let currentTime = 0;
     let totalDamageDealt = 0;
 
