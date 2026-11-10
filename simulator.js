@@ -118,12 +118,12 @@ function runSimulation() {
         return;
     }
 
-    const absoluteSTR = (strBase * (1 + strPct)) + strFlat;
-    const absoluteDEX = (dexBase * (1 + dexPct)) + dexFlat;
-    const absoluteATT = (attBase * (1 + attPct)) + attFlat;
+    const absoluteSTR = Math.floor((strBase * (1 + strPct)) + strFlat);
+    const absoluteDEX = Math.floor(dexBase * (1 + dexPct)) + dexFlat);
+    const absoluteATT = Math.floor((attBase * (1 + attPct)) + attFlat);
 
     const wepmodifier = 1.7; 
-    const finalDmgPlaceholder = 1.9603; 
+    const finalDmgPlaceholder = 1+1.9602924065 ; 
 
     const statBracket = (4 * absoluteSTR) + absoluteDEX;
     const attBracket = absoluteATT / 100;
