@@ -123,7 +123,7 @@ function runSimulation() {
     const absoluteATT = Math.floor((attBase * (1 + attPct)) + attFlat);
 
     const wepmodifier = 1.7; 
-    const finalDmgPlaceholder = 1+1.9602924065 ; 
+    const finalDmgPlaceholder = 2.9602924065; 
 
     const statBracket = (4 * absoluteSTR) + absoluteDEX;
     const attBracket = absoluteATT / 100;
