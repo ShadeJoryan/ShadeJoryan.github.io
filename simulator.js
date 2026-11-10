@@ -129,7 +129,7 @@ function runSimulation() {
     const absoluteATT = Math.floor((attBase * (1 + attPct)) + attFlat);
 
     const wepmodifier = 1.7; 
-    const finalDmg = 1 + ((100 * [(1 + 45/100) * (1 + 10/100) * (1 + 15/100) * (1 + 10/100) * (1 + 17/100) * (1 + 14/100) * (1 + 10/100)] − 100)/100); 
+    const finalDmg = 1 + ((100 * ((1 + 45/100) * (1 + 10/100) * (1 + 15/100) * (1 + 10/100) * (1 + 17/100) * (1 + 14/100) * (1 + 10/100)) − 100)/100); 
     const levelFinalDamage = 1.1;
 
     const statBracket = (4 * absoluteSTR) + absoluteDEX;
