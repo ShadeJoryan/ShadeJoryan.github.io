@@ -119,7 +119,7 @@ function runSimulation() {
     }
 
     const absoluteSTR = Math.floor((strBase * (1 + strPct)) + strFlat);
-    const absoluteDEX = Math.floor(dexBase * (1 + dexPct)) + dexFlat);
+    const absoluteDEX = Math.floor((dexBase * (1 + dexPct)) + dexFlat);
     const absoluteATT = Math.floor((attBase * (1 + attPct)) + attFlat);
 
     const wepmodifier = 1.7; 
