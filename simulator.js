@@ -152,7 +152,7 @@ function runSimulation() {
     while (currentTime < maxTime) {
         let skill = skillData["HEXA Spirit Claw"];
         
-        let activationDamage = damageRange * skill.skillMultiplier * skill.hits;
+        let activationDamage = baseDamageMultiplier * skill.skillMultiplier * skill.hits;
         
         skill.damage += activationDamage;
         skill.uses += 1;
