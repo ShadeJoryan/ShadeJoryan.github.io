@@ -129,7 +129,7 @@ function runSimulation() {
     const absoluteATT = Math.floor((attBase * (1 + attPct)) + attFlat);
 
     const wepmodifier = 1.7; 
-    const finalDmgPlaceholder = 2.9602924065; 
+    const finalDmg = 1 + ((100 × [(1 + 45/100) × (1 + 10/100) × (1 + 15/100) × (1 + 10/100) × (1 + 17/100) × (1 + 14/100) × (1 + 10/100)] − 100)/100); 
     const levelFinalDamage = 1.1;
 
     const statBracket = (4 * absoluteSTR) + absoluteDEX;
@@ -150,7 +150,7 @@ function runSimulation() {
     // 3. Run simulation automatically for all 3 modes
     for (let [modeKey, cfg] of Object.entries(modeConfigs)) {
         let critBracket = cfg.critBase + critDmg;
-        let baseDamageMultiplier = Math.round(Math.round(statBracket * attBracket * wepmodifier) * dmgBracket * critBracket * defenseBracket * elemBracket * finalDmgPlaceholder * levelFinalDamage);
+        let baseDamageMultiplier = Math.round(Math.round(statBracket * attBracket * wepmodifier) * dmgBracket * critBracket * defenseBracket * elemBracket * finalDmg * levelFinalDamage);
 
         let currentTime = 0;
         let totalDamageDealt = 0;
