@@ -70,14 +70,11 @@
             
             <div class="stat-section-title">Simulation Constraints</div>
             <div class="input-group"><label>Simulation Duration (seconds):</label><input type="number" id="sim-duration"></div>
-        </div>
-    </div>
- <div class="input-group"><label>Simulation Duration (seconds):</label><input type="number" id="sim-duration"></div>
-            
-            <!-- NEW: Profile Export / Import Management Interface -->
+
+            <!-- Profile Export / Import Management Interface -->
             <div class="stat-section-title">Data Profiles (Save/Share Build)</div>
             <div style="margin-top: 10px;">
-                <textarea id="profile-string-box" placeholder="Your exported layout profile string will appear here, or paste an external profile code here to import it..." style="width: 100%; height: 60px; background: #2d3748; color: #fff; border: 1px solid #4a5568; border-radius: 4px; padding: 5px; font-family: monospace; font-size: 11px; resize: none;"></textarea>
+                <textarea id="profile-string-box" placeholder="Exported layout string appears here, or paste a profile code to import..." style="width: 100%; height: 60px; background: #2d3748; color: #fff; border: 1px solid #4a5568; border-radius: 4px; padding: 5px; font-family: monospace; font-size: 11px; resize: none;"></textarea>
                 <div style="display: flex; gap: 10px; margin-top: 8px;">
                     <button type="button" class="tab-btn" onclick="exportProfile()" style="padding: 6px 12px; height: auto; background: #4a5568;">Copy/Export Profile</button>
                     <button type="button" class="tab-btn" onclick="importProfile()" style="padding: 6px 12px; height: auto; background: #319795;">Import Profile</button>
@@ -85,6 +82,7 @@
             </div>
         </div>
     </div>
+
     <!-- TAB 2: RUN SIMULATION -->
     <div id="sim-tab" class="tab-content">
         <div class="ui-window">
@@ -116,25 +114,7 @@
             </table>
         </div>
     </div>
-    <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            // Find all input elements on the page
-            const inputs = document.querySelectorAll('input[type="number"]');
-            
-            // Loop through each input and see if there is a saved value in browser memory
-            inputs.forEach(input => {
-                const savedValue = localStorage.getItem(`shade_sim_${input.id}`);
-                if (savedValue !== null) {
-                    input.value = savedValue;
-                }
 
-                // Whenever the user types or updates an input, save it instantly
-                input.addEventListener('input', () => {
-                    localStorage.setItem(`shade_sim_${input.id}`, input.value);
-                });
-            });
-        });
-    </script>
     <script src="simulator.js"></script>
 </body>
 </html>
