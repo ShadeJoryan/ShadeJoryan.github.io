@@ -138,6 +138,7 @@ function runSimulation() {
     const elemBracket = 0.5 * (1 + elemResist);
 
     const damageRange = Math.round(Math.round(statBracket * attBracket * wepmodifier) * (1 + dmg) * finalDmgPlaceholder); 
+    const damageRangeBoss = Math.round(Math.round(statBracket * attBracket * wepmodifier) * dmgBracket * finalDmgPlaceholder);
 
     const modeConfigs = {
         avg: { critBase: 1.35, mastery: 0.95 },
